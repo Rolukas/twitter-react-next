@@ -1,3 +1,5 @@
+import useCurrentUser from '@/hooks/useCurrentUser';
+import { signOut } from 'next-auth/react';
 import { IconType } from 'react-icons';
 import { BiLogOut } from 'react-icons/bi';
 import { BsBellFill, BsHouseFill } from 'react-icons/bs';
@@ -10,6 +12,7 @@ interface RouteIcon {
   label: string;
   href: string;
   icon: IconType;
+  auth?: boolean;
 }
 
 const items: RouteIcon[] = [
@@ -22,15 +25,18 @@ const items: RouteIcon[] = [
     label: 'Notifications',
     href: '/notifications',
     icon: BsBellFill,
+    auth: true,
   },
   {
     label: 'Profile',
     href: '/users/123',
     icon: FaUser,
+    auth: true,
   },
 ];
 
 const Sidebar: React.FC = () => {
+  const { data: currentUser } = useCurrentUser();
   return (
     <div className="col-span-1 h-full pr-4 md:pr-6">
       <div className="flex flex-col items-end">
@@ -42,9 +48,12 @@ const Sidebar: React.FC = () => {
               href={item.href}
               label={item.label}
               icon={item.icon}
+              auth={item.auth}
             />
           ))}
-          <SidebarItem onClick={() => {}} icon={BiLogOut} label="Logout" />
+          {currentUser && (
+            <SidebarItem onClick={() => signOut()} icon={BiLogOut} label="Logout" />
+          )}
           <SidebarTweetButton />
         </div>
       </div>
